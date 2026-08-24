@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "MotoTracker",
+    "slug": "moto-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "mototracker",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.mototracker.app",
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow MotoTracker to select a photo for your vehicle.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
