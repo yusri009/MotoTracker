@@ -96,13 +96,14 @@ export async function cancelDocumentReminders(reminders: NotificationReminder[])
 
 export async function scheduleDocumentReminders(
   document: VehicleDocument,
+  reminderDays: readonly number[] = DOCUMENT_REMINDER_DAYS,
 ): Promise<ReminderScheduleResult> {
   const now = new Date();
-  const futureReminders = DOCUMENT_REMINDER_DAYS.map((daysBefore) => ({
+  const futureReminders = reminderDays.map((daysBefore) => ({
     daysBefore,
     scheduledFor: reminderDate(document.expiryDate, daysBefore),
   })).filter((reminder) => reminder.scheduledFor.getTime() > now.getTime());
-  const skippedCount = DOCUMENT_REMINDER_DAYS.length - futureReminders.length;
+  const skippedCount = reminderDays.length - futureReminders.length;
 
   if (futureReminders.length === 0) {
     await notificationRepository.replaceForDocument(document.id, []);

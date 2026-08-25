@@ -141,6 +141,32 @@ const migrations: Migration[] = [
       CHECK (last_service_cost IS NULL OR last_service_cost >= 0);
     `,
   },
+  {
+    version: 3,
+    name: 'add_preferences_and_active_vehicle',
+    sql: `
+      CREATE TABLE document_reminder_preferences (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        vehicle_id INTEGER NOT NULL,
+        document_type TEXT NOT NULL CHECK (
+          document_type IN ('INSURANCE', 'REVENUE_LICENCE')
+        ),
+        days_before INTEGER NOT NULL CHECK (days_before BETWEEN 0 AND 365),
+        created_at TEXT NOT NULL,
+        UNIQUE (vehicle_id, document_type, days_before),
+        FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX idx_document_reminder_preferences_vehicle
+        ON document_reminder_preferences(vehicle_id, document_type);
+
+      CREATE TABLE app_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+    `,
+  },
 ];
 
 export async function runMigrations(database: SQLiteDatabase) {

@@ -47,7 +47,18 @@ export const vehicleRepository = {
 
   async getPrimary(): Promise<Vehicle | null> {
     const database = await getDatabase();
-    return database.getFirstAsync<Vehicle>(`${vehicleSelect} ORDER BY created_at ASC LIMIT 1`);
+    const activeVehicle = await database.getFirstAsync<Vehicle>(
+      `${vehicleSelect}
+       WHERE id = (
+         SELECT CAST(value AS INTEGER)
+         FROM app_settings
+         WHERE key = 'active_vehicle_id'
+       )`,
+    );
+
+    return activeVehicle ?? database.getFirstAsync<Vehicle>(
+      `${vehicleSelect} ORDER BY created_at ASC LIMIT 1`,
+    );
   },
 
   async create(input: CreateVehicleInput): Promise<Vehicle> {
@@ -93,6 +104,16 @@ export const vehicleRepository = {
         input.currentOdometer,
         now,
         'Initial odometer reading',
+        now,
+      );
+
+      await transaction.runAsync(
+        `INSERT INTO app_settings (key, value, updated_at)
+         VALUES ('active_vehicle_id', ?, ?)
+         ON CONFLICT(key) DO UPDATE SET
+           value = excluded.value,
+           updated_at = excluded.updated_at`,
+        String(vehicleId),
         now,
       );
     });

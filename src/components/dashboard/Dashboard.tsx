@@ -17,6 +17,9 @@ interface DashboardProps {
   onManageChain: () => void;
   onManageInsurance: () => void;
   onManageLicence: () => void;
+  onViewHistory: () => void;
+  onOpenSettings: () => void;
+  onManageVehicles: () => void;
 }
 
 export function Dashboard({
@@ -29,6 +32,9 @@ export function Dashboard({
   onManageChain,
   onManageInsurance,
   onManageLicence,
+  onViewHistory,
+  onOpenSettings,
+  onManageVehicles,
 }: DashboardProps) {
   const isDark = useColorScheme() === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
@@ -143,6 +149,72 @@ export function Dashboard({
           />
         </View>
       </View>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={onManageVehicles}
+        style={({ pressed }) => [
+          styles.historyButton,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            opacity: pressed ? 0.78 : 1,
+          },
+        ]}
+      >
+        <View style={styles.historyCopy}>
+          <Text style={styles.historyIcon}>🏍️</Text>
+          <View style={styles.historyText}>
+            <Text style={[styles.historyTitle, { color: colors.text }]}>My vehicles</Text>
+            <Text style={[styles.historySubtitle, { color: colors.textMuted }]}>Add, edit, or switch the active vehicle</Text>
+          </View>
+        </View>
+        <Text style={[styles.historyArrow, { color: colors.primary }]}>→</Text>
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={onViewHistory}
+        style={({ pressed }) => [
+          styles.historyButton,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            opacity: pressed ? 0.78 : 1,
+          },
+        ]}
+      >
+        <View style={styles.historyCopy}>
+          <Text style={styles.historyIcon}>📋</Text>
+          <View style={styles.historyText}>
+            <Text style={[styles.historyTitle, { color: colors.text }]}>Maintenance history</Text>
+            <Text style={[styles.historySubtitle, { color: colors.textMuted }]}>View all work or add a manual event</Text>
+          </View>
+        </View>
+        <Text style={[styles.historyArrow, { color: colors.primary }]}>→</Text>
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={onOpenSettings}
+        style={({ pressed }) => [
+          styles.historyButton,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            opacity: pressed ? 0.78 : 1,
+          },
+        ]}
+      >
+        <View style={styles.historyCopy}>
+          <Text style={styles.historyIcon}>⚙️</Text>
+          <View style={styles.historyText}>
+            <Text style={[styles.historyTitle, { color: colors.text }]}>Settings & data</Text>
+            <Text style={[styles.historySubtitle, { color: colors.textMuted }]}>Reminder timing and local backup</Text>
+          </View>
+        </View>
+        <Text style={[styles.historyArrow, { color: colors.primary }]}>→</Text>
+      </Pressable>
     </View>
   );
 }
@@ -216,4 +288,20 @@ const styles = StyleSheet.create({
   cardList: {
     gap: Spacing.md,
   },
+  historyButton: {
+    minHeight: 76,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.md,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderRadius: Radius.md,
+  },
+  historyCopy: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
+  historyIcon: { fontSize: 22 },
+  historyText: { flex: 1, gap: Spacing.xs },
+  historyTitle: { fontSize: 16, fontWeight: '800' },
+  historySubtitle: { fontSize: 13, lineHeight: 18 },
+  historyArrow: { fontSize: 22, fontWeight: '700' },
 });

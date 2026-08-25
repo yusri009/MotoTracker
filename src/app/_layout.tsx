@@ -25,6 +25,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="vehicles/index"
+            options={{
+              title: 'My vehicles',
+              headerShadowVisible: false,
+            }}
+          />
+          <Stack.Screen
             name="odometer/update"
             options={{
               title: 'Odometer',
@@ -46,6 +53,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="maintenance/history"
+            options={{
+              title: 'Maintenance history',
+              headerShadowVisible: false,
+            }}
+          />
+          <Stack.Screen
             name="insurance/index"
             options={{
               title: 'Insurance',
@@ -56,6 +70,13 @@ export default function RootLayout() {
             name="licence/index"
             options={{
               title: 'Revenue licence',
+              headerShadowVisible: false,
+            }}
+          />
+          <Stack.Screen
+            name="settings/index"
+            options={{
+              title: 'Settings & data',
               headerShadowVisible: false,
             }}
           />

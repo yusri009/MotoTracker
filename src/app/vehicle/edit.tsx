@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { router, type Href } from 'expo-router';
+import { router, type Href, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -57,6 +57,11 @@ export default function VehicleEditScreen() {
   const isDark = useColorScheme() === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
   const database = useDatabaseStatus();
+  const params = useLocalSearchParams<{ mode?: string; vehicleId?: string }>();
+  const createNew = params.mode === 'new';
+  const requestedVehicleId = /^\d+$/.test(params.vehicleId ?? '')
+    ? Number(params.vehicleId)
+    : null;
   const [existingVehicle, setExistingVehicle] = useState<Vehicle | null>(null);
   const [form, setForm] = useState<VehicleForm>(emptyForm);
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -73,7 +78,13 @@ export default function VehicleEditScreen() {
 
     let active = true;
 
-    void vehicleRepository.getPrimary().then(
+    const vehiclePromise = createNew
+      ? Promise.resolve(null)
+      : requestedVehicleId
+        ? vehicleRepository.getById(requestedVehicleId)
+        : vehicleRepository.getPrimary();
+
+    void vehiclePromise.then(
       (vehicle) => {
         if (!active) {
           return;
@@ -105,7 +116,7 @@ export default function VehicleEditScreen() {
     return () => {
       active = false;
     };
-  }, [database.state]);
+  }, [createNew, database.state, requestedVehicleId]);
 
   function updateField(field: keyof VehicleForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -251,7 +262,7 @@ export default function VehicleEditScreen() {
         >
           <View style={styles.intro}>
             <Text style={[styles.title, { color: colors.text }]}>
-              {existingVehicle ? 'Edit your vehicle' : 'Add your vehicle'}
+              {existingVehicle ? 'Edit your vehicle' : 'Add another vehicle'}
             </Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>
               {existingVehicle

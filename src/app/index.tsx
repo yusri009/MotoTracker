@@ -1,6 +1,6 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Dashboard } from '@/components/dashboard/Dashboard';
@@ -97,9 +97,12 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.brandRow}>
           <View style={[styles.mark, { backgroundColor: colors.accentSoft }]}>
-            <Text style={styles.markIcon} accessibilityLabel="Motorcycle">
-              🏍️
-            </Text>
+            <Image
+              accessibilityLabel="MotoTracker"
+              source={require('../../assets/mototracker-icon.png')}
+              style={styles.markIcon}
+              resizeMode="cover"
+            />
           </View>
           <Text style={[styles.eyebrow, { color: colors.primary }]}>MOTOTRACKER</Text>
         </View>
@@ -122,12 +125,20 @@ export default function HomeScreen() {
             vehicle={vehicle}
             maintenanceSettings={maintenanceSettings}
             documents={documents}
-            onEditProfile={() => router.push('./vehicle/edit')}
+            onEditProfile={() =>
+              router.push({
+                pathname: '/vehicle/edit',
+                params: { vehicleId: String(vehicle.id) },
+              })
+            }
             onUpdateOdometer={() => router.push('./odometer/update')}
             onManageOil={() => router.push('./maintenance/oil')}
             onManageChain={() => router.push('./maintenance/chain')}
             onManageInsurance={() => router.push('./insurance')}
             onManageLicence={() => router.push('./licence')}
+            onViewHistory={() => router.push('./maintenance/history')}
+            onOpenSettings={() => router.push('./settings')}
+            onManageVehicles={() => router.push('./vehicles')}
           />
         ) : (
           <View style={styles.centeredState}>
@@ -184,7 +195,9 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
   },
   markIcon: {
-    fontSize: 22,
+    width: 44,
+    height: 44,
+    borderRadius: Radius.md,
   },
   eyebrow: {
     fontSize: 13,

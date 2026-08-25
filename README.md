@@ -4,7 +4,18 @@ MotoTracker is an Android-first, offline vehicle maintenance tracker built with 
 
 ## Current status
 
-The runnable application shell, offline database foundation, vehicle profile flow, maintenance dashboard, odometer history, engine-oil tracking, chain-lubrication tracking, insurance expiry tracking, and revenue licence tracking are complete. Documents include renewal history and local reminders at 30, 14, 7, and 1 day before expiry in development and production builds. On startup, MotoTracker opens `mototracker.db`, enables foreign keys and write-ahead logging, and applies pending schema migrations.
+MotoTracker's first-version feature set is implemented:
+
+- Multiple vehicle profiles with a persistent active-vehicle switcher
+- Non-decreasing odometer updates and full reading history
+- Engine-oil and chain-lubrication reminders with completion history
+- Combined maintenance history and manual service, tyre, brake, battery, air-filter, and other events
+- Insurance and revenue-licence expiry tracking with renewal history
+- Configurable local expiry reminder days per vehicle and document type
+- Portable JSON export of all user-entered data
+- Branded Android icon, splash screen, native prebuild, and EAS build profiles
+
+On startup, MotoTracker opens `mototracker.db`, enables foreign keys and write-ahead logging, and applies pending versioned migrations without clearing existing data.
 
 Installed Expo-native modules:
 
@@ -12,33 +23,58 @@ Installed Expo-native modules:
 - `expo-notifications` for local document-expiry reminders
 - `expo-image-picker` for optional vehicle photos
 - `expo-file-system` for durable app-local image storage
+- `expo-sharing` for portable JSON backup exports
+- `expo-dev-client` for installable development builds with notification support
+- `expo-splash-screen` and `expo-system-ui` for branded native startup and light/dark presentation
 
 The initial migration creates separate tables for vehicles, odometer history, maintenance history, maintenance settings, documents, notification reminders, and migration history. Later versioned migrations preserve existing data while extending the schema. Repository modules provide the only interface that feature screens use for database operations.
 
-## Run the app
+## Run in Expo Go
 
 Requirements:
 
 - Node.js LTS
 - Android Studio with an emulator, or an Android device with Expo Go
 
-Install and start:
+Install dependencies and start Metro:
 
 ```bash
 npm install
-npm run android
-```
-
-To start Metro without immediately opening Android:
-
-```bash
 npm start
 ```
 
-Check TypeScript:
+Scan the QR code with Expo Go. All tracking and export features work there. Expo Go cannot load this project's notification runtime, so expiry alerts are scheduled only in development and production builds.
+
+## Android development build
+
+A full Android SDK with a platform and build-tools is required:
+
+```bash
+npm run prebuild:android
+npm run android
+npm run start:dev-client
+```
+
+The generated `android` folder is intentionally ignored and can always be recreated from `app.json`.
+
+## EAS preview and production builds
+
+Authenticate once, then choose an APK preview or Play Store app bundle:
+
+```bash
+npx eas-cli login
+npm run build:android:preview
+npm run build:android:production
+```
+
+The `preview` profile creates an internally distributable APK. The `production` profile creates an Android App Bundle and auto-increments the version code.
+
+## Verification
 
 ```bash
 npm run typecheck
+EXPO_NO_TELEMETRY=1 npx expo install --check
+EXPO_NO_TELEMETRY=1 npx expo export --platform android
 ```
 
 ## Recommended structure
@@ -56,11 +92,10 @@ src/
   utils/               Maintenance and date calculations
 ```
 
-Feature route folders such as `history` and `settings` will be introduced with their corresponding features. Keeping the route tree focused prevents unfinished screens from becoming navigable routes. The next feature step is the combined maintenance history and manual maintenance-event flow.
+## Architecture
 
-## Architecture direction
-
-- UI screens will call hooks or services, not SQLite directly.
-- Repositories in `src/db` will own persistence operations.
-- Business calculations will remain pure functions in `src/utils`.
-- Database tables will use vehicle IDs from the start so multi-vehicle support can be added later without redesigning persistence.
+- UI screens call repositories and application services rather than embedding SQLite statements.
+- Repository tables remain separated by concern and use foreign keys with vehicle IDs.
+- Business calculations remain pure functions in `src/utils`.
+- Notification imports are guarded so Expo Go remains usable while installed builds retain local scheduling.
+- Backup files exclude device-specific notification identifiers and vehicle image binaries; all user-entered records and preferences are included.

@@ -159,3 +159,10 @@ export interface NotificationReminder {
   scheduledFor: string;
   createdAt: string;
 }
+
+export interface DocumentReminderPreference {
+  vehicleId: number;
+  documentType: DocumentType;
+  daysBefore: number;
+  createdAt: string;
+}

@@ -1,5 +1,6 @@
 import {
   documentRepository,
+  documentReminderPreferenceRepository,
   notificationRepository,
 } from '@/db/repositories';
 import type { SaveVehicleDocumentInput, VehicleDocument } from '@/models';
@@ -53,7 +54,11 @@ export const revenueLicenceService = {
       await notificationRepository.deleteForDocument(previousLicence.id);
     }
 
-    const reminderResult = await scheduleDocumentReminders(activeLicence);
+    const reminderDays = await documentReminderPreferenceRepository.getDays(
+      input.vehicleId,
+      'REVENUE_LICENCE',
+    );
+    const reminderResult = await scheduleDocumentReminders(activeLicence, reminderDays);
     const history = await documentRepository.listByType(
       input.vehicleId,
       'REVENUE_LICENCE',
