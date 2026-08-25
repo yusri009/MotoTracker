@@ -13,6 +13,7 @@ MotoTracker's first-version feature set is implemented:
 - Insurance and revenue-licence expiry tracking with renewal history
 - Configurable local expiry reminder days per vehicle and document type
 - Portable JSON export of all user-entered data
+- Persistent light/dark theme toggle across the full app
 - Branded Android icon, splash screen, native prebuild, and EAS build profiles
 
 On startup, MotoTracker opens `mototracker.db`, enables foreign keys and write-ahead logging, and applies pending versioned migrations without clearing existing data.

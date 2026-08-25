@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
+import { ThemeToggleButton } from '@/components/ui/ThemeToggleButton';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { documentRepository, maintenanceRepository, vehicleRepository } from '@/db/repositories';
 import { useDatabaseStatus } from '@/hooks/useDatabaseStatus';
@@ -105,6 +106,7 @@ export default function HomeScreen() {
             />
           </View>
           <Text style={[styles.eyebrow, { color: colors.primary }]}>MOTOTRACKER</Text>
+          <ThemeToggleButton />
         </View>
 
         {isLoading ? (
@@ -200,6 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
   },
   eyebrow: {
+    flex: 1,
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 1.6,

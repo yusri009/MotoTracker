@@ -1,18 +1,29 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useColorScheme } from 'react-native';
 
 import { DatabaseProvider } from '@/hooks/useDatabaseStatus';
+import {
+  ThemePreferenceProvider,
+  useThemePreference,
+} from '@/hooks/useThemePreference';
 import { configureNotificationPresentation } from '@/services/notificationService';
 
 void configureNotificationPresentation();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-
   return (
     <DatabaseProvider>
+      <ThemePreferenceProvider>
+        <ThemedApp />
+      </ThemePreferenceProvider>
+    </DatabaseProvider>
+  );
+}
+
+function ThemedApp() {
+  const { isDark } = useThemePreference();
+
+  return (
       <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
         <StatusBar style={isDark ? 'light' : 'dark'} />
         <Stack>
@@ -82,6 +93,5 @@ export default function RootLayout() {
           />
         </Stack>
       </ThemeProvider>
-    </DatabaseProvider>
   );
 }
